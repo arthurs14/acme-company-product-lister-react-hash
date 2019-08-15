@@ -4,6 +4,16 @@
       .nav {
         display: flex;
         justify-content: space-around;
+        padding: 1rem;
+      }
+      h1 {
+        text-align: center;
+      }
+
+      .selected {
+        background-color: tomato;
+        color: white;
+        padding: 1rem;
       }
     </style>
     <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
@@ -20,8 +30,8 @@
       const Nav = ({companies, products, page}) => {
         return createElement('div',
           {className: 'nav'},
-          createElement('a', {href: '#products'}, `Products (${products.length})`),
-          createElement('a', {href: '#companies'},`Companies (${companies.length})`));
+          createElement('a', {href: '#products', className: page === 'products' ? 'selected' : ''}, `Products (${products.length})`),
+          createElement('a', {href: '#companies', className: page === 'companies' ? 'selected' : ''},`Companies (${companies.length})`));
         };
 
       const CompanyList = ({ companies }) => {
@@ -45,6 +55,13 @@
         }
 
         async componentDidMount() {
+          if(!window.location.hash.slice(1)) {
+            window.location.hash = 'products';
+          }
+          window.addEventListener('hashchange', (ev) => {
+            const page = window.location.hash.slice(1);
+            this.setState({ page })
+          })
           const urls = [
             'https://acme-users-api-rev.herokuapp.com/api/companies',
             'https://acme-users-api-rev.herokuapp.com/api/products',
@@ -52,15 +69,23 @@
             const responses = await Promise.all(urls.map (url => axios.get(url)));
             const [companies, products] = responses.map(response => response.data);
 
-            this.setState({companies: companies, products: products})
+            this.setState({
+              companies: companies,
+              products: products
+            });
         }
 
         render() {
           const { companies, products, page } = this.state;
           const nav = createElement(Nav, {products, companies, page});
-          const companyList = createElement(CompanyList, { companies });
-          const productList = createElement(ProductList, { products });
-          return createElement('div', null, 'Acme Company Product Lister', nav, companyList, productList);
+          const title = createElement('h1', null, 'AcmeCompany Product Lister');
+          let currentView;
+          if(page === 'products') {
+            currentView = createElement(ProductList, { products });
+          } else if(page === 'companies') {
+            currentView = createElement(CompanyList, { companies });
+          }
+          return createElement('div', null, title, nav, currentView);
         }
       }
 
