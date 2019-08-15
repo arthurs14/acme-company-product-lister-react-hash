@@ -25,6 +25,16 @@
       const {render} = ReactDOM;
       const {createElement, Component} = React;
 
+      const Nav = ({companies, products, page}) => {
+        console.log("companies=", companies);
+        console.log(products);
+        return createElement('div',
+        {className: 'nav'},
+        createElement('a', {href: '#products'}, `Products (${products.length})`),
+        createElement('a', {href: '#companies'},`Companies (${companies.length})`)
+        )};
+
+
 
       class App extends Component {
        constructor() {
@@ -51,10 +61,11 @@
        }
 
        render() {
-         const {companies, products} = this.state;
-         console.log(companies);
-         console.log(products);
-         return createElement('hr', null);
+         const {companies, products, page} = this.state;
+         const nav = createElement(Nav, {products, companies, page})
+         //console.log(companies);
+         //console.log(products);
+         return createElement('div', null, 'Acme Company Product Lister', nav);
 
       }
       }
