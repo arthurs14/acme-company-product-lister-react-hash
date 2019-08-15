@@ -1,0 +1,15 @@
+.nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem;
+}
+h1 {
+  text-align: center;
+}
+
+.selected {
+  background-color: tomato;
+  color: white;
+  padding: 1rem;
+  border-radius: 10%;
+}
